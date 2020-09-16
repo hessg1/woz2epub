@@ -1,0 +1,19 @@
+{
+	"name": "woz2epub",
+	"version": "0.1.0",
+	"description": "Skript, das die Artikel der Wochenzeitung WOZ lädt und daraus ein epub erstellt zur Verwendung auf ebook-Readern",
+	"main": "woz.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/hessg1/woz2epub.git"
+	},
+	"keywords": [
+		"WOZ",
+		"epub"
+	],
+	"author": "hessg",
+	"license": "MIT",
+	"dependencies": {
+		"request": "^2.88.2",
+	}
+}
