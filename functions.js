@@ -3,9 +3,61 @@ const cheerio = require('cheerio');
 
 const cleanString = (string) => {
     if (string) {
-        return string.replace(/\n/g, '').trim();
+        return string.replace(/\n/g, '').trim().replace('Mail an AutorIn', '').replace('Twitter Profil von AutorIn', '');
     }
     return undefined;
+}
+
+const getArticle = (_url, _cookie) => {
+    return new Promise((resolve, reject) => {
+        request({
+            'method': 'GET',
+            'url': _url,
+            'headers': {
+                'cookie': _cookie
+            }
+        }, function (_error, _response, _html) {
+            if (_error) reject(_error);
+            if (_response && _response.statusCode === 200) {
+                const $ = cheerio.load(_html);
+
+                // first try embedded image
+                let image = $('div[class=article-content]  picture  img').attr('src');
+                // if no embedded, try gallery
+                if (!image) {
+                    image = $('section[class=gallery]  picture  img').attr('src');
+                }
+
+                const article = {
+                    author: cleanString($('p[class=field-authorline]').text()),
+                    lead: cleanString($('p[class=field-subhead]').text()),
+                    image: image ? cleanString(image.split('?')[0]) : undefined,
+                    captionHTML: $('div[class=article-content]  figure  p').html(),
+                    factboxHTML: $('aside[class=field-factbox]').html(),
+                    content: []
+                }
+
+                $('div[class=article-content]').children().each((i, element) => {
+                    if ( $(element).attr('class') === undefined && $(element).is('p')) {
+                        article.content.push({
+                            type: 'p',
+                            text: cleanString($(element).text())
+                        });
+                    }
+                    if ( $(element).attr('class') === undefined && $(element).is('h4')) {
+                        article.content.push({
+                            type: 'h4',
+                            text: cleanString($(element).text())
+                        });
+                    }
+                });
+                resolve(article);
+            } else {
+                console.log('Fetching Article URLs, HTTP Status: ' + response.statusCode);
+                reject(response.statusCode);
+            }
+        });
+    });
 }
 
 module.exports = {
@@ -74,10 +126,10 @@ module.exports = {
                 'method': 'GET',
                 'url': _baseUrl + '/' + _subpath,
                 'headers': {}
-            }, (error, response, html) => {
-                if (error) reject(error);
-                if (response && response.statusCode === 200) {
-                    const $ = cheerio.load(html);
+            }, (_error, _response, _html) => {
+                if (_error) reject(_error);
+                if (_response && _response.statusCode === 200) {
+                    const $ = cheerio.load(_html);
                     const woz = {
                         issue: $('nav[class=wozissueindex-pager] > h2').html(),
                         imageUrl: $('div[class=content] > picture > img').attr('src').split('?')[0],
@@ -108,6 +160,23 @@ module.exports = {
                     console.log('Fetching Article URLs, HTTP Status: ' + response.statusCode);
                     reject(response.statusCode);
                 }
+            });
+        });
+    },
+
+    loadSection(_section, _cookie) {
+        return new Promise((resolve, reject) => {
+            const sectionArticlePromises = []
+            _section.articles.forEach((article) => {
+                sectionArticlePromises.push(getArticle(article.url, _cookie));
+            });
+            Promise.all(sectionArticlePromises).then((articles) => {
+                articles.forEach((article, index) => {
+                    _section.articles[index] = {..._section.articles[index], ...article}
+                })
+                _section.title = _section.title ? _section.title : 'Titel'
+                console.log('Fetched all articles for section: ', _section.title);
+                resolve(_section);
             });
         });
     }
