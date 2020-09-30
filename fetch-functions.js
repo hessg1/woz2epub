@@ -174,7 +174,7 @@ module.exports = {
                 articles.forEach((article, index) => {
                     _section.articles[index] = {..._section.articles[index], ...article}
                 })
-                _section.title = _section.title ? _section.title : 'Titel'
+                _section.title = _section.title ? _section.title : ''
                 console.log('Fetched all articles for section: ', _section.title);
                 resolve(_section);
             });
