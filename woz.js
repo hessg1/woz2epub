@@ -8,12 +8,14 @@ const builder = require('./build-functions.js');
 const loginUrl = 'https://www.woz.ch/user/login';
 const loginCookieName = 'SSESSddc90f5c4c9846092367f68f393a4a6c';
 
+const issue = '2041';
+
 builder.initEbook();
 
-/**
+///**
 Promise.all([
     fetcher.getLoginCookie(loginUrl, credentials).then((res) => {console.log('Logged in'); return res}),
-    fetcher.getArticleUrls('http://woz.ch', '2038').then((res) => {console.log('Fetched article overview'); return res})
+    fetcher.getArticleUrls('http://woz.ch', issue).then((res) => {console.log('Fetched article overview'); return res})
 ]).then((results) => {
     const loginCookie = results[0].find(cookie => cookie.cookie.includes(loginCookieName));
 
@@ -24,11 +26,12 @@ Promise.all([
     });
 
     Promise.all(sectionPromises).then((sections) => {
+        builder.writeTOCandContent(woz)
         console.log('loaded all sections!');
-        fs.writeFile('woz-2038.json', JSON.stringify(woz), (err) => {
+        fs.writeFile('woz-' + issue + '.json', JSON.stringify(woz), (err) => {
         if (err) throw err;
         console.log('done - WOZ saved to file!');
     });
     })
 });
-**/
+//**/
