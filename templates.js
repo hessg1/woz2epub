@@ -27,10 +27,10 @@ module.exports = {
             '  <spine toc="ncx" >\n', // insert spine items here
             // 4
             '  </spine>\n' +
-            '  <guide>\n',
-            '    <reference type="title-page" title="Title Page" href="text/title.xhtml"/>\n' +
-            '    <reference type="text" title="Content" href="text/content.xhtml"/>\n' +
-            '    <reference type="copyright-page" title="Copyright" href="text/copy.xhtml"/>\n' +
+            '  <guide>\n' +
+            '    <reference type="title-page" title="Title Page" href="title.xhtml"/>\n' +
+            '    <reference type="text" title="Content" href="content.xhtml"/>\n' +
+            '    <reference type="copyright-page" title="Copyright" href="end.xhtml"/>\n' +
             '  </guide>\n' +
             '</package>'
           ],
@@ -42,9 +42,9 @@ module.exports = {
         '    <meta name="dtb:uid" content="', // insert identifier here
         // 1
              '"/>\n' +
-        '    <meta name="dtb:depth" content="3"/><!-- TODO: check if correct / necessary-->\n' +
-        '    <meta name="dtb:totalPageCount" content="0"/><!-- TODO: check if correct / necessary-->\n' +
-        '    <meta name="dtb:maxPageNumber" content="0"/><!-- TODO: check if correct / necessary-->\n' +
+        '    <meta name="dtb:depth" content="3"/>\n' +
+        '    <meta name="dtb:totalPageCount" content="0"/>\n' +
+        '    <meta name="dtb:maxPageNumber" content="0"/>\n' +
         '  </head>\n' +
         '  <docTitle>\n' +
         '    <text>', // insert book title here
@@ -75,7 +75,7 @@ module.exports = {
             '    <title>', // insert page title here
             // 1
                 '</title>\n' +
-            '	 </head>', // insert body here
+            '	 </head>\n\n', // insert body here
             // 2
             '\n</html>'
           ]

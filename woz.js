@@ -26,7 +26,7 @@ Promise.all([
     });
 
     Promise.all(sectionPromises).then((sections) => {
-        builder.writeTOCandContent(woz)
+        builder.writeFiles(woz, credentials.name, issue);
         console.log('loaded all sections!');
         fs.writeFile('woz-' + issue + '.json', JSON.stringify(woz), (err) => {
         if (err) throw err;

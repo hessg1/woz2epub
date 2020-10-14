@@ -20,7 +20,67 @@ const setupStaticFiles = function() {
       });
     });
   });
+}
 
+const writeArticleFile = function(article, reference) {
+  const TEMPLATE = templates.TEXTFILE;
+  let htmlString = TEMPLATE[0] + article.title + TEMPLATE[1] +
+      '  <body id="epub-' + reference + '">\n' +
+      '    <h2>' + article.subtitle + '</h2>\n' +
+      '    <h1>' + article.title + '</h1>\n';
+
+  if (article.author) {
+    htmlString = htmlString + '    <span class="author">' + article.author + '</span>\n';
+  }
+
+  htmlString = htmlString + '    <p class="lead">' + article.lead +'</p>\n';
+
+  article.content.forEach((element, i) => {
+    htmlString = htmlString +
+      '    <' + element.type + '>\n' +
+      '      ' + element.text + '\n' +
+      '    </' + element.type + '>\n';
+  });
+
+  htmlString = htmlString + '  </body>\n' + TEMPLATE[2];
+
+  return new Promise((resolve, reject) => {
+    fs.writeFile('temp/OEBPS/' + reference + '.xhtml', htmlString, (err) => {
+      if (err) reject('Error writing article file for article ' + reference + ':  ' + err);
+      resolve();
+    });
+  });
+
+}
+
+const writeSectionFile = function(section, reference) {
+  const TEMPLATE = templates.TEXTFILE;
+  const title = section.title.length > 0 ? section.title : 'Unbenanntes Dossier';
+  let htmlString = TEMPLATE[0] + title + TEMPLATE[1] +
+      '  <body id="epub-' + reference + '">\n' +
+      '    <h1>' + title + '</h1>\n';
+
+
+  htmlString = htmlString +
+        '    <p class="lead">Das ist eine Platzhalter-Seite für eine Dossier-Seite. Es gibt folgende Artikel:</p>\n' +
+        '    <ul>\n';
+
+  section.articles.forEach((article, i) => {
+    htmlString = htmlString +
+      '    <li>\n' +
+      '       <h4>' + article.subtitle + '</h4>\n' +
+      '       <h3>' + article.title + '</h3>\n' +
+      '    </li>\n';
+  });
+
+  htmlString = htmlString + '    </ul>\n  </body>\n' + TEMPLATE[2];
+
+  return new Promise((resolve, reject) => {
+    fs.writeFile('temp/OEBPS/' + reference + '.xhtml', htmlString, (err) => {
+      if (err) reject('Error writing article file for article ' + reference + ':  ' + err);
+      resolve();
+    });
+  });
 }
 
 module.exports = {
@@ -41,12 +101,13 @@ module.exports = {
     });
   },
 
-  writeTOCandContent(woz) {
-    const id = 'WOZ2041-for-hessg@zlakfoto.ch';
+  writeFiles: function(woz, user, issue) {
+    const id = 'WOZ' + issue + '-for-' + user;
     const author = 'WOZ Die Wochenzeitung';
-    const title = 'WOZ 41/2020';
+    const title = 'WOZ ' + woz.issue;
     const TOC = templates.TOC;
     const CONTENT = templates.CONTENT;
+
     let tocFile = TOC[0] + id + TOC[1] + title + TOC[2] + author + TOC[3] + templates.TOC_TITLE_NAVPOINT;
     let contentFile = CONTENT[0] + title + CONTENT[1] + id + CONTENT[2];
 
@@ -75,17 +136,24 @@ module.exports = {
                                 '        <navLabel>\n' +
                                 '          <text>' + article.title + '</text>\n' +
                                 '        </navLabel>\n' +
-                                '        <content src="' + articleRef + '.xthml"/>\n' +
+                                '        <content src="' + articleRef + '.xhtml"/>\n' +
                                 '      </navPoint>\n';
 
           manifestItems = manifestItems +  '      <item id="' + articleRef + '" href="' + articleRef + '.xhtml" media-type="application/xhtml+xml"/>\n';
           spineItems = spineItems + '    <itemref idref="' + articleRef + '" linear="yes"/>\n';
+
+          writeArticleFile(article, articleRef);
       });
+
+      writeSectionFile(section, sectionRef);
 
       navPoint = navPoint + '    </navPoint>\n';
       tocFile = tocFile + navPoint;
       console.log('TOC: wrote section ' + section.title + ' (' + sectionIndex + ').');
     });
+
+    manifestItems = manifestItems + '      <item id="end" href="end.xhtml" media-type="application/xhtml+xml"/>\n';
+    spineItems = spineItems + '    <itemref idref="end" linear="yes"/>\n';
 
     tocFile = tocFile + TOC[4];
 
@@ -102,7 +170,9 @@ module.exports = {
     });
   },
 
-  writeImageFiles(images) {
+
+
+  writeImageFiles: function(images) {
     return new Promise((resolve, reject) => {
       // TODO: fetch images from url array, then write files correctxl
     })
