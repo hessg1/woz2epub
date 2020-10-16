@@ -1,5 +1,4 @@
 const fs = require('fs');
-const path = require('path');
 const rimraf = require('rimraf');
 
 const templates = require('./templates.js');
@@ -108,6 +107,8 @@ module.exports = {
     const TOC = templates.TOC;
     const CONTENT = templates.CONTENT;
 
+    const promises = [];
+
     let tocFile = TOC[0] + id + TOC[1] + title + TOC[2] + author + TOC[3] + templates.TOC_TITLE_NAVPOINT;
     let contentFile = CONTENT[0] + title + CONTENT[1] + id + CONTENT[2];
 
@@ -142,10 +143,10 @@ module.exports = {
           manifestItems = manifestItems +  '      <item id="' + articleRef + '" href="' + articleRef + '.xhtml" media-type="application/xhtml+xml"/>\n';
           spineItems = spineItems + '    <itemref idref="' + articleRef + '" linear="yes"/>\n';
 
-          writeArticleFile(article, articleRef);
+          promises.push(writeArticleFile(article, articleRef));
       });
 
-      writeSectionFile(section, sectionRef);
+      promises.push(writeSectionFile(section, sectionRef));
 
       navPoint = navPoint + '    </navPoint>\n';
       tocFile = tocFile + navPoint;
@@ -159,7 +160,7 @@ module.exports = {
 
     contentFile = contentFile + manifestItems + CONTENT[3] + spineItems + CONTENT[4];
 
-    return new Promise((resolve, reject) => {
+    promises.push(new Promise((resolve, reject) => {
       fs.writeFile('temp/OEBPS/content.opf', contentFile, (err) => {
         if (err) reject('Error writing content.opf: ' + err);
         fs.writeFile('temp/OEBPS/toc.ncx', tocFile, (err) => {
@@ -167,14 +168,8 @@ module.exports = {
           resolve();
         });
       });
-    });
-  },
+    }));
 
-
-
-  writeImageFiles: function(images) {
-    return new Promise((resolve, reject) => {
-      // TODO: fetch images from url array, then write files correctxl
-    })
+    return Promise.all(promises);
   }
 }

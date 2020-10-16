@@ -8,30 +8,33 @@ const builder = require('./build-functions.js');
 const loginUrl = 'https://www.woz.ch/user/login';
 const loginCookieName = 'SSESSddc90f5c4c9846092367f68f393a4a6c';
 
-const issue = '2041';
+const issue = '2042';
 
-builder.initEbook();
+ builder.initEbook().then(() => {
+    fetcher.downloadImage('https://static.woz.ch/sites/woz.ch/files/styles/field_cover_image_issue_index_default/public/img/covers/4220_packshot_hires.jpg', 'temp/OEBPS/img/title-woz.jpg')
+ });
 
-///**
-Promise.all([
-    fetcher.getLoginCookie(loginUrl, credentials).then((res) => {console.log('Logged in'); return res}),
-    fetcher.getArticleUrls('http://woz.ch', issue).then((res) => {console.log('Fetched article overview'); return res})
-]).then((results) => {
-    const loginCookie = results[0].find(cookie => cookie.cookie.includes(loginCookieName));
-
-    const woz = results[1];
-    const sectionPromises = [];
-    woz.sections.forEach((section) => {
-        sectionPromises.push(fetcher.loadSection(section, loginCookie.cookie));
-    });
-
-    Promise.all(sectionPromises).then((sections) => {
-        builder.writeFiles(woz, credentials.name, issue);
-        console.log('loaded all sections!');
-        fs.writeFile('woz-' + issue + '.json', JSON.stringify(woz), (err) => {
-        if (err) throw err;
-        console.log('done - WOZ saved to file!');
-    });
-    })
-});
+//
+// ///**
+// Promise.all([
+//     fetcher.getLoginCookie(loginUrl, credentials).then((res) => {console.log('Logged in'); return res}),
+//     fetcher.getArticleUrls('http://woz.ch', issue).then((res) => {console.log('Fetched article overview'); return res})
+// ]).then((results) => {
+//     const loginCookie = results[0].find(cookie => cookie.cookie.includes(loginCookieName));
+//
+//     const woz = results[1];
+//     const sectionPromises = [];
+//     woz.sections.forEach((section) => {
+//         sectionPromises.push(fetcher.loadSection(section, loginCookie.cookie));
+//     });
+//
+//     Promise.all(sectionPromises).then((sections) => {
+//         builder.writeFiles(woz, credentials.name, issue);
+//         console.log('loaded all sections!');
+//         fs.writeFile('woz-' + issue + '.json', JSON.stringify(woz), (err) => {
+//         if (err) throw err;
+//         console.log('done - WOZ saved to file!');
+//     });
+//     })
+// });
 //**/

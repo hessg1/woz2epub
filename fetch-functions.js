@@ -1,4 +1,5 @@
 const request = require('request');
+const fs = require('fs');
 const cheerio = require('cheerio');
 
 const cleanString = (string) => {
@@ -179,5 +180,17 @@ module.exports = {
                 resolve(_section);
             });
         });
+    },
+
+    downloadImage(url, filename) {
+      return new Promise((resolve, reject) => {
+        request(url).pipe(fs.createWriteStream(filename)).on('close', (err) => {
+            if (err) {
+                console.log(err);
+                reject('Error downloading image ' + filename);
+            }
+            resolve();
+        });
+    });
     }
 };
