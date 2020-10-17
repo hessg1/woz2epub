@@ -8,6 +8,7 @@ const setupStaticFiles = function() {
     fs.mkdirSync('temp', 0744);
     fs.mkdirSync('temp/META-INF', 0744);
     fs.mkdirSync('temp/OEBPS', 0744);
+    fs.mkdirSync('temp/OEBPS/img', 0744);
 
     // write mimetype file
     fs.writeFile('temp/mimetype', templates.MIMETYPE, (err) => {
@@ -32,7 +33,9 @@ const writeArticleFile = function(article, reference) {
     htmlString = htmlString + '    <span class="author">' + article.author + '</span>\n';
   }
 
-  htmlString = htmlString + '    <p class="lead">' + article.lead +'</p>\n';
+  if (article.lead) {
+    htmlString = htmlString + '    <p class="lead">' + article.lead +'</p>\n';
+  }
 
   article.content.forEach((element, i) => {
     htmlString = htmlString +
