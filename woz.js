@@ -9,11 +9,12 @@ const builder = require('./build-functions.js');
 
 const loginUrl = 'https://www.woz.ch/user/login';
 const loginCookieName = 'SSESSddc90f5c4c9846092367f68f393a4a6c';
+const DEBUG = true;
 
 // calculate newest issue number
-const issue =  new Date().getFullYear().toString().substring(2,4) + // year
-            (new Date().getDay() > 3 ? week() : week() - 1); // week number (new issue arrives on thursday)
-
+const date  = new Date();
+const issue =  date.getFullYear().toString().substring(2,4) + // year
+            ((date.getDay() > 3 || date.getDay() === 0) ? week() : week() - 1); // week number (new issue arrives on thursday)
 Promise.all([
     fetcher.getLoginCookie(loginUrl, credentials).then((res) => {console.log('Logged in'); return res}),
     fetcher.getArticleUrls('http://woz.ch', issue).then((res) => {console.log('Fetched article overview'); return res}),
@@ -40,6 +41,13 @@ Promise.all([
             archive.directory('./temp/META-INF/', 'META-INF');
             archive.directory('./temp/OEBPS/', 'OEBPS');
             archive.finalize();
+
+            if (DEBUG) {
+              fs.writeFile('woz-' + issue + '.json', JSON.stringify(woz, null, 1), (err) => {
+                if (err) throw err;
+                console.log('DEBUG file saved.');
+              });
+            }
 
             console.log('File <woz-' + issue + '.epub> created.');
         });

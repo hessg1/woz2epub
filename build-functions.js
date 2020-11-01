@@ -29,20 +29,34 @@ const writeArticleFile = function(article, reference) {
       '    <h2>' + article.subtitle + '</h2>\n' +
       '    <h1>' + article.title + '</h1>\n';
 
-  if (article.author) {
-    htmlString = htmlString + '    <span class="author">' + article.author + '</span>\n';
-  }
-
   if (article.lead) {
     htmlString = htmlString + '    <p class="lead">' + article.lead +'</p>\n';
   }
 
+  if (article.author) {
+    htmlString = htmlString + '    <span class="author">' + article.author + '</span>\n';
+  }
+  
   article.content.forEach((element, i) => {
     htmlString = htmlString +
       '    <' + element.type + '>\n' +
       '      ' + element.text + '\n' +
       '    </' + element.type + '>\n';
   });
+
+  if (article.kotextHTML) {
+    htmlString = htmlString +
+    '    <div class="kotext" style="border: 1px solid black; padding: 0.5em">\n' +
+    article.kotextHTML +
+    '    </div>';
+  }
+
+  if (article.factboxHTML) {
+    htmlString = htmlString +
+    '    <div class="factbox" style="border: 1px solid black; padding: 0.5em">\n' +
+    article.factboxHTML +
+    '    </div>';
+  }
 
   htmlString = htmlString + '  </body>\n' + TEMPLATE[2];
 

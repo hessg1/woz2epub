@@ -4,7 +4,10 @@ const cheerio = require('cheerio');
 
 const cleanString = (string) => {
     if (string) {
-        return string.replace(/\n/g, '').trim().replace('Mail an AutorIn', '').replace('Twitter Profil von AutorIn', '');
+        return string.replace(/\n/g, '')  // clean out breaks
+                     .trim().replace('Mail an AutorIn', '') // we don't want the mail links
+                     .replace('Twitter Profil von AutorIn', '') // or the twitter links
+                     .replace(/\?[A-Z, ÖÄÜ]/g, (x) => '?<br />&nbsp;' + x[1]); // and in interview article, we need correct breaks
     }
     return undefined;
 }
@@ -35,6 +38,7 @@ const getArticle = (_url, _cookie) => {
                     image: image ? cleanString(image.split('?')[0]) : undefined,
                     captionHTML: $('div[class=article-content]  figure  p').html(),
                     factboxHTML: $('aside[class=field-factbox]').html(),
+                    kotextHTML: $('article[class=field-kotext]').html(),
                     content: []
                 }
 
@@ -54,8 +58,12 @@ const getArticle = (_url, _cookie) => {
                 });
                 resolve(article);
             } else {
-                console.log('Fetching Article URLs, HTTP Status: ' + response.statusCode);
-                reject(response.statusCode);
+              if (_response) {
+                console.log('Fetching Article URL '+ _url +', HTTP Status: ' + _response.statusCode);
+                reject(_response.statusCode);
+              } else {
+                reject('No response for url ' + _url);
+              }
             }
         });
     });

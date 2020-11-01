@@ -27,11 +27,11 @@ module.exports = {
             '  <spine toc="ncx" >\n', // insert spine items here
             // 4
             '  </spine>\n' +
-            // '  <guide>\n' +
-            // '    <reference type="title-page" title="Title Page" href="title.xhtml"/>\n' +
-            // '    <reference type="text" title="Content" href="content.xhtml"/>\n' +
-            // '    <reference type="copyright-page" title="Copyright" href="end.xhtml"/>\n' +
-            // '  </guide>\n' +
+            '  <guide>\n' +
+            '    <reference type="title-page" title="Title Page" href="title.xhtml"/>\n' +
+            '    <reference type="text" title="Content" href="content.xhtml"/>\n' +
+            '    <reference type="copyright-page" title="Copyright" href="end.xhtml"/>\n' +
+            '  </guide>\n' +
             '</package>'
           ],
   TOC: [ // 0
