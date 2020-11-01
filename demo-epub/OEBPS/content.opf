@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookID" version="2.0" xml:lang="de">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+    <dc:title>WOZ 37/2020</dc:title>
+    <dc:identifier id="BookID" opf:scheme="CustomID">ch.zlakfoto.ghess.erstes.buch</dc:identifier>
+    <meta name="cover" content="coverpage"/>
+  </metadata>
+  <manifest>
+    <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+    <item id="coverpage" href="img/title-woz.jpg" media-type="image/jpeg"/>
+    <item id="title" href="title.xhtml" media-type="application/xhtml+xml"/>
+    <item id="erstens" href="erstens.xhtml" media-type="application/xhtml+xml"/>
+    <item id="zweitens" href="zweitens.xhtml" media-type="application/xhtml+xml"/>
+    <item id="end" href="end.xhtml" media-type="application/xhtml+xml"/>
+  </manifest>
+  <spine toc="ncx" >
+    <itemref idref="title" linear="yes"/>
+    <itemref idref="erstens" linear="yes"/>
+    <itemref idref="zweitens" linear="yes"/>
+    <itemref idref="end" linear="yes"/>
+  </spine>
+  <guide>
+    <reference type="title-page" title="Title Page" href="text/title.xhtml"/>
+    <reference type="text" title="Content" href="text/content.xhtml"/>
+    <reference type="copyright-page" title="Copyright" href="text/copy.xhtml"/>
+  </guide>
+</package>

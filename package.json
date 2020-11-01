@@ -14,6 +14,10 @@
 	"author": "hessg",
 	"license": "MIT",
 	"dependencies": {
+		"archiver": "^5.0.2",
+		"cheerio": "^1.0.0-rc.3",
+		"current-week-number": "^1.0.7",
 		"request": "^2.88.2",
+		"rimraf": "^3.0.2"
 	}
 }
