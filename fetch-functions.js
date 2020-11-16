@@ -180,12 +180,20 @@ module.exports = {
                 sectionArticlePromises.push(getArticle(article.url, _cookie));
             });
             Promise.all(sectionArticlePromises).then((articles) => {
+              const imagePromises = [];
                 articles.forEach((article, index) => {
                     _section.articles[index] = {..._section.articles[index], ...article}
+                    if (article.image) {
+                      let name = article.image.split('/');
+                      name = name[name.length - 1];
+                      imagePromises.push(this.downloadImage(article.image, './temp/OEBPS/img/' + name));
+                    }
                 })
                 _section.title = _section.title ? _section.title : ''
-                console.log('Fetched all articles for section: ', _section.title);
-                resolve(_section);
+                Promise.all(imagePromises).then(() => {
+                    console.log('Fetched all articles for section: ', _section.title);
+                  resolve(_section);
+                });
             });
         });
     },

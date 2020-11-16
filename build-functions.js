@@ -36,7 +36,19 @@ const writeArticleFile = function(article, reference) {
   if (article.author) {
     htmlString = htmlString + '    <span class="author">' + article.author + '</span>\n';
   }
-  
+
+  if (article.image) {
+    let name = article.image.split('/');
+    name = name[name.length - 1];
+    const caption =   article.captionHTML
+                          ? '       <figcaption>' + article.captionHTML + '</figcaption>\n'
+                          : ''
+    htmlString = htmlString + '     <figure>\n' +
+                              '       <img src="img/' + name + '"/>\n' +
+                              caption +
+                              '     </figure>\n';
+  }
+
   article.content.forEach((element, i) => {
     htmlString = htmlString +
       '    <' + element.type + '>\n' +
