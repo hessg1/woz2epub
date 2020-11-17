@@ -41,9 +41,10 @@ const writeArticleFile = function(article, reference) {
     let name = article.image.split('/');
     name = name[name.length - 1];
     const caption =   article.captionHTML
-                          ? '       <figcaption>' + article.captionHTML + '</figcaption>\n'
+                          ? '       <figcaption><br />' + article.captionHTML + '</figcaption>\n'
                           : ''
-    htmlString = htmlString + '     <figure>\n' +
+    htmlString = htmlString + '     <br />\n' +
+                              '     <figure>\n' +
                               '       <img src="img/' + name + '"/>\n' +
                               caption +
                               '     </figure>\n';
