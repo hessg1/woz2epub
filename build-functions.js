@@ -36,7 +36,20 @@ const writeArticleFile = function(article, reference) {
   if (article.author) {
     htmlString = htmlString + '    <span class="author">' + article.author + '</span>\n';
   }
-  
+
+  if (article.image) {
+    let name = article.image.split('/');
+    name = name[name.length - 1];
+    const caption =   article.captionHTML
+                          ? '       <figcaption><br />' + article.captionHTML + '</figcaption>\n'
+                          : ''
+    htmlString = htmlString + '     <br />\n' +
+                              '     <figure>\n' +
+                              '       <img src="img/' + name + '"/>\n' +
+                              caption +
+                              '     </figure>\n';
+  }
+
   article.content.forEach((element, i) => {
     htmlString = htmlString +
       '    <' + element.type + '>\n' +
@@ -69,23 +82,28 @@ const writeArticleFile = function(article, reference) {
 
 }
 
-const writeSectionFile = function(section, reference) {
+const writeSectionFile = function(section, reference, sectionIndex) {
   const TEMPLATE = templates.TEXTFILE;
-  const title = section.title.length > 0 ? section.title : 'Unbenanntes Dossier';
+  const title = section.title.length > 0 ? section.title : '';
   let htmlString = TEMPLATE[0] + title + TEMPLATE[1] +
       '  <body id="epub-' + reference + '">\n' +
       '    <h1>' + title + '</h1>\n';
 
 
   htmlString = htmlString +
-        '    <p class="lead">Das ist eine Platzhalter-Seite für eine Dossier-Seite. Es gibt folgende Artikel:</p>\n' +
         '    <ul>\n';
 
   section.articles.forEach((article, i) => {
+    const articleLead = article.lead
+                              ? '       <p>' + article.lead + '</p>\n'
+                              : '';
     htmlString = htmlString +
       '    <li>\n' +
       '       <h4>' + article.subtitle + '</h4>\n' +
-      '       <h3>' + article.title + '</h3>\n' +
+      '       <a href="article-' + + sectionIndex + '-' + (i + 1) + '.xhtml">\n' +
+      '         <h3>' + article.title + '</h3>\n' +
+      '       </a>\n' +
+              articleLead +
       '    </li>\n';
   });
 
@@ -163,7 +181,7 @@ module.exports = {
           promises.push(writeArticleFile(article, articleRef));
       });
 
-      promises.push(writeSectionFile(section, sectionRef));
+      promises.push(writeSectionFile(section, sectionRef, sectionIndex + 1));
 
       navPoint = navPoint + '    </navPoint>\n';
       tocFile = tocFile + navPoint;
