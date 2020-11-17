@@ -1,5 +1,5 @@
 # woz2epub
-Tool to fetch WOZ articles and pack them into an EPUB file.
+Tool to fetch WOZ articles and create an EPUB file for comfortable reading on an eBook reading device.
 
-## disclaimer
+## Disclaimer
 For private use only. Use at own responsibility.
