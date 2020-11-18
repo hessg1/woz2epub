@@ -11,14 +11,20 @@ const loginUrl = 'https://www.woz.ch/user/login';
 const unnamedSections = ['Titelseite', 'Rückseite', 'Bund 2'];
 const loginCookieName = 'SSESSddc90f5c4c9846092367f68f393a4a6c';
 const tolinoPath = settings.readerPath;
-const DEBUG = false;
+const args = process.argv.slice(2);
+const DEBUG = args[1] ? args[1].toLowerCase() === 'true' : false;
 
 // calculate newest issue number
 const date  = new Date();
-const issue =  date.getFullYear().toString().substring(2,4) + // year
-              ((date.getDay() > 3 || date.getDay() === 0)
-                        ? week()
-                        : week() - 1); // week number (new issue arrives on thursday)
+
+let issue = args[0];
+// if no issue is set, we load the newest issue
+if (!issue) {
+  issue = date.getFullYear().toString().substring(2,4) + // year
+                ((date.getDay() > 3 || date.getDay() === 0)
+                          ? week()
+                          : week() - 1); // week number (new issue arrives on thursday)
+}
 
 const fileName = 'WOZ-' + issue + '.epub';
 Promise.all([
@@ -60,7 +66,7 @@ Promise.all([
       archive.finalize();
 
       if (DEBUG) {
-        fs.writeFile(fileName, JSON.stringify(woz, null, 1), (err) => {
+        fs.writeFile(fileName.split('.epub')[0] + '.json', JSON.stringify(woz, null, 1), (err) => {
           if (err) throw err;
           console.log('DEBUG file saved.');
         });
