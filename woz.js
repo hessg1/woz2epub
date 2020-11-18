@@ -39,7 +39,6 @@ Promise.all([
   let unnamedCounter = 0;
   woz.sections.forEach((section) => {
     if (!section.title) {
-      console.log(unnamedCounter, section)
       section.title =  unnamedSections[unnamedCounter++];
     }
     sectionPromises.push(fetcher.loadSection(section, loginCookie.cookie));
