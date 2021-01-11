@@ -20,10 +20,13 @@ const date  = new Date();
 let issue = args[0];
 // if no issue is set, we load the newest issue
 if (!issue) {
-  issue = date.getFullYear().toString().substring(2,4) + // year
-                ((date.getDay() > 3 || date.getDay() === 0)
-                          ? week()
-                          : week() - 1); // week number (new issue arrives on thursday)
+  const year = date.getFullYear().toString().substring(2,4); // year
+  let issueWeek = (date.getDay() > 3 || date.getDay() === 0) // week (new issue arrives on thursday)
+              ? week()
+              : (week() - 1);
+  issue = issueWeek < 10
+          ? year + '0' + issueWeek
+          : yar + issueWeek
 }
 
 const fileName = 'WOZ-' + issue + '.epub';
