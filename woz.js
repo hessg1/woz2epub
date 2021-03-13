@@ -26,7 +26,7 @@ if (!issue) {
               : (week() - 1);
   issue = issueWeek < 10
           ? year + '0' + issueWeek
-          : yar + issueWeek
+          : year + issueWeek
 }
 
 const fileName = 'WOZ-' + issue + '.epub';
